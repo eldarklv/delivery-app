@@ -14,10 +14,11 @@ services:
     image: mongo:latest
     container_name: mongo
     volumes:
-      - .private/mongo_data:/var/lib/mongodb
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     ports:
       - ${MONGO_PORTS}
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: delivery
 
