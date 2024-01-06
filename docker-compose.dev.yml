@@ -1,0 +1,23 @@
+services:
+
+  delivery:
+    image: node:20.10
+    container_name: delivery
+    working_dir: /delivery
+    volumes:
+      - ./:/delivery
+    ports: 
+      - ${DELIVERY_PORTS}
+    command: npm run dev
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    volumes:
+      - .private/mongo_data:/var/lib/mongodb
+    ports:
+      - ${MONGO_PORTS}
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+
