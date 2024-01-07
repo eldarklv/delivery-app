@@ -1,10 +1,23 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const userRouter = require("./routes/User");
+const userRouter = require("./routes/UserRoute");
+const passport = require("passport")
+const session = require("express-session");
 require("dotenv").config();
+require("./config/passportConf");
 
 const app = express();
 app.use(express.json());
+
+app.use(
+  session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/api", userRouter);
 
