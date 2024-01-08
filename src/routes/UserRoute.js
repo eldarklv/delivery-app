@@ -12,7 +12,7 @@ router.post(
   UserController.signIn
 );
 
-router.get("/failure", isAuthenticated, (req, res) => {
+router.get("/failure", (req, res) => {
   res.status(400).json({
     error: "Неверный логин или пароль",
     status: "error",

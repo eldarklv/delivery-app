@@ -11,6 +11,7 @@ passport.use(
         const user = await UserModule.findByEmail(email);
 
         if (!user) {
+          console.log("test")
           return done(null, false, { message: "Incorrect email." });
         }
 
