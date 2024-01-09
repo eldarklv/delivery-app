@@ -26,13 +26,20 @@ const UserController = {
     }
   },
 
-  async signIn(req, res, next) {
+  async signIn(req, res) {
     const { email } = req.body;
     let user = await UserModule.findByEmail(email);
     user = user.toJSON();
     delete user.passwordHash;
     delete user.__v;
     res.status(200).json({ data: user, status: "ok" });
+  },
+
+  failure(req, res) {
+    res.status(400).json({
+      error: "Неверный логин или пароль",
+      status: "error",
+    });
   },
 };
 

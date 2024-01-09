@@ -1,3 +1,5 @@
+# docker-compose --env-file .env -f docker-compose.dev.yml up  
+
 services:
 
   delivery:
@@ -21,5 +23,3 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: delivery
-
-# docker-compose --env-file .env -f docker-compose.dev.yml up  
