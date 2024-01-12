@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const UserController = require("../controllers/UserController");
+const AdvertisementController = require("../controllers/AdvertisementController");
 const passport = require("passport");
 const isAuthenticated = require("../middlewares/isAuthenticated");
+const multer = require("../middlewares/multer");
 
 router.post("/signup", UserController.createUser);
 
@@ -15,7 +17,14 @@ router.post(
 router.get("/failure", UserController.failure);
 
 router.get("/test", isAuthenticated, (req, res) => {
-  res.json({test: "ok"})
+  res.json({ test: "ok" });
 });
+
+router.post(
+  "/advertisements",
+  isAuthenticated,
+  multer.array("images"),
+  AdvertisementController.createAdvertisement
+);
 
 module.exports = router;

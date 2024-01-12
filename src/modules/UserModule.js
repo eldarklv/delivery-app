@@ -16,6 +16,11 @@ const UserModule = {
     return user;
   },
 
+  async findById(id) {
+    const user = await User.findById(id)
+    return user
+  },
+
   async isValidPassword(password, email) {
     const { passwordHash } = await this.findByEmail(email);
     return await bcrypt.compare(password, passwordHash);

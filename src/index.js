@@ -1,12 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const userRouter = require("./routes/UserRoute");
+const userRouter = require("./routes/ApiRoutes");
 const passport = require("passport")
 const session = require("express-session");
 require("dotenv").config();
 require("./config/passportConf");
 
 const app = express();
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(
