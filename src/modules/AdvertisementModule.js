@@ -1,44 +1,82 @@
 const Advertisement = require("../models/AdvertisementModel");
+const UserModule = require("./UserModule");
+const mongoose = require("mongoose");
 
 const AdvertisementModule = {
   async create(data) {
-    const createdAd = await Advertisement.create(data);
-    return createdAd;
+    let advertisement = [await Advertisement.create(data)];
+
+    advertisement = await Promise.all(
+      advertisement.map(async (item) => {
+        const { name } = await UserModule.findById(item.userId);
+        let newItem = item.toJSON();
+        delete newItem.updatedAt;
+        delete newItem.__v;
+        delete newItem.userId;
+        newItem.user = { id: item.userId, name: name };
+        return newItem;
+      })
+    );
+
+    return advertisement;
   },
 
   async find(params) {
-    let { shortTitle, description, userId, tags } = params;
+    let { shortTitle, description, userId, tags, advertisementId } = params;
 
     shortTitle = shortTitle || "";
     description = description || "";
     userId = userId || "";
     tags = tags || [];
 
-    let query = {
-      shortTitle: { $regex: shortTitle, $options: "i" },
-      description: { $regex: description, $options: "i" },
-      userId: userId,
-    };
+    let query = {};
+
+    if (shortTitle) {
+      query.shortTitle = { $regex: shortTitle, $options: "i" };
+    }
+
+    if (description) {
+      query.description = { $regex: description, $options: "i" };
+    }
+
+    if (userId) {
+      query.userId = userId;
+    }
 
     if (tags && tags.length > 0) {
       query.tags = { $all: tags };
     }
 
-    const advertisements = await Advertisement.find(query);
+    if (advertisementId) {
+      const ObjectId = mongoose.Types.ObjectId;
+      const objectId = new ObjectId(advertisementId);
+      query._id = objectId;
+    }
+
+    let advertisements = await Advertisement.find(query);
+
+    advertisements = await Promise.all(
+      advertisements.map(async (item) => {
+        const { name } = await UserModule.findById(item.userId);
+        let newItem = item.toJSON();
+        delete newItem.updatedAt;
+        delete newItem.__v;
+        delete newItem.userId;
+        newItem.user = { id: item.userId, name: name };
+        return newItem;
+      })
+    );
+
     return advertisements;
   },
 };
 
-// test data
-async function test() {
-  const testData = await AdvertisementModule.find({
-    shortTitle: "test",
-    description: "",
-    userId: "65a2c20ea2a4fef84ca8dd25",
-    tags: ["vue"],
-  });
-  console.log("LOOK", testData);
-}
-test();
+// async function test() {
+//   const testData = await AdvertisementModule.find({
+//     advertisementId: "65a2c7099f699724dd703987",
+//   });
+//   console.log("LOOK", testData);
+// }
+// test();
 
 module.exports = AdvertisementModule;

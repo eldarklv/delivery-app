@@ -27,4 +27,8 @@ router.post(
   AdvertisementController.createAdvertisement
 );
 
+router.get("/advertisements", AdvertisementController.getAllAdvertisements);
+
+router.get("/advertisements/:id", AdvertisementController.getAdvertisementById)
+
 module.exports = router;

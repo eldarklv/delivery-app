@@ -8,21 +8,24 @@ const AdvertisementController = {
     const userId = req.session.passport.user;
     const dataIn = { shortTitle, description, images, userId };
 
-    let dataOut = await AdvertisementModule.create(dataIn);
-    const { name } = await UserModule.findById(userId);
+    let advertisement = await AdvertisementModule.create(dataIn);
 
-    dataOut = dataOut.toJSON();
-    delete dataOut.createdAt;
-    delete dataOut.updatedAt;
-    delete dataOut.tags;
-    delete dataOut.__v;
-    delete dataOut.userId;
-    dataOut.user = { id: userId, name: name };
+    res.json({ data: advertisement, status: "ok" });
+  },
 
-    res.json({
-      data: [dataOut],
-      status: "ok",
+  async getAllAdvertisements(req, res) {
+    const advertisements = await AdvertisementModule.find({});
+
+    res.json({ data: advertisements, status: "ok" });
+  },
+
+  async getAdvertisementById(req, res) {
+    const advertisementId = req.params.id;
+    const advertisement = await AdvertisementModule.find({
+      advertisementId: advertisementId,
     });
+
+    res.json({ data: advertisement, status: "ok" });
   },
 };
 
