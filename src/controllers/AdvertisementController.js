@@ -9,14 +9,15 @@ const AdvertisementController = {
     const dataIn = { shortTitle, description, images, userId };
 
     let dataOut = await AdvertisementModule.create(dataIn);
-    const name = await UserModule.findById(userId);
-    dataOut.set('user', { id: userId, name: name });
+    const { name } = await UserModule.findById(userId);
 
     dataOut = dataOut.toJSON();
     delete dataOut.createdAt;
     delete dataOut.updatedAt;
     delete dataOut.tags;
     delete dataOut.__v;
+    delete dataOut.userId;
+    dataOut.user = { id: userId, name: name };
 
     res.json({
       data: [dataOut],
