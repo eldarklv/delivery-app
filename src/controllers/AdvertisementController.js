@@ -27,6 +27,41 @@ const AdvertisementController = {
 
     res.json({ data: advertisement, status: "ok" });
   },
+
+  async deleteAdvertisement(req, res) {
+    try {
+      const advertisementId = req.params.id;
+
+      const advertisement = await AdvertisementModule.find({
+        advertisementId: advertisementId,
+      });
+
+      if (advertisement[0] === null || advertisement.length === 0) {
+        return res
+          .status(404)
+          .json({ error: "Объявление не найдено", status: "error" });
+      }
+      const advertisementUserId = advertisement[0].user.id;
+      const sessionUserId = req.session.passport.user;
+      console.log(advertisementUserId === sessionUserId);
+
+      if (advertisementUserId === sessionUserId) {
+        const advertisementRes = await AdvertisementModule.delete(
+          advertisementId
+        );
+        res.json({ data: advertisementRes, status: "ok" });
+      } else {
+        return res
+          .status(403)
+          .json({ error: "Доступ запрещен", status: "error" });
+      }
+    } catch (error) {
+      console.error(`Не удалось удалить объявление: ${error}`);
+      res
+        .status(500)
+        .json({ error: "Внутренняя ошибка сервера", status: "error" });
+    }
+  },
 };
 
 module.exports = AdvertisementController;

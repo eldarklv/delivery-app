@@ -22,52 +22,93 @@ const AdvertisementModule = {
   },
 
   async find(params) {
-    let { shortTitle, description, userId, tags, advertisementId } = params;
+    try {
+      let { shortTitle, description, userId, tags, advertisementId } = params;
 
-    shortTitle = shortTitle || "";
-    description = description || "";
-    userId = userId || "";
-    tags = tags || [];
+      shortTitle = shortTitle || "";
+      description = description || "";
+      userId = userId || "";
+      tags = tags || [];
 
-    let query = {};
+      let query = {};
 
-    if (shortTitle) {
-      query.shortTitle = { $regex: shortTitle, $options: "i" };
+      if (shortTitle) {
+        query.shortTitle = { $regex: shortTitle, $options: "i" };
+      }
+
+      if (description) {
+        query.description = { $regex: description, $options: "i" };
+      }
+
+      if (userId) {
+        query.userId = userId;
+      }
+
+      if (tags && tags.length > 0) {
+        query.tags = { $all: tags };
+      }
+
+      if (advertisementId) {
+        const ObjectId = mongoose.Types.ObjectId;
+        const objectId = new ObjectId(advertisementId);
+        query._id = objectId;
+      }
+
+      let advertisements = await Advertisement.find(query);
+
+      advertisements = await Promise.all(
+        advertisements.map(async (item) => {
+          const user = await UserModule.findById(item.userId);
+
+          if (user) {
+            let newItem = item.toJSON();
+            delete newItem.updatedAt;
+            delete newItem.__v;
+            delete newItem.userId;
+            newItem.user = { id: item.userId, name: user.name };
+            return newItem;
+          } else {
+            console.error(`Не удалось найти пользователя ${item.userId}`);
+            return null;
+          }
+        })
+      );
+      
+      return advertisements;
+    } catch (error) {
+      console.error(error);
+      return null;
     }
+  },
 
-    if (description) {
-      query.description = { $regex: description, $options: "i" };
-    }
+  async delete(id) {
+    let advertisement = [
+      await Advertisement.findByIdAndUpdate(
+        id,
+        { isDeleted: true },
+        { new: true }
+      ),
+    ];
 
-    if (userId) {
-      query.userId = userId;
-    }
+    advertisement = await Promise.all(
+      advertisement.map(async (item) => {
+        const user = await UserModule.findById(item.userId);
 
-    if (tags && tags.length > 0) {
-      query.tags = { $all: tags };
-    }
-
-    if (advertisementId) {
-      const ObjectId = mongoose.Types.ObjectId;
-      const objectId = new ObjectId(advertisementId);
-      query._id = objectId;
-    }
-
-    let advertisements = await Advertisement.find(query);
-
-    advertisements = await Promise.all(
-      advertisements.map(async (item) => {
-        const { name } = await UserModule.findById(item.userId);
-        let newItem = item.toJSON();
-        delete newItem.updatedAt;
-        delete newItem.__v;
-        delete newItem.userId;
-        newItem.user = { id: item.userId, name: name };
-        return newItem;
+        if (user) {
+          let newItem = item.toJSON();
+          delete newItem.updatedAt;
+          delete newItem.__v;
+          delete newItem.userId;
+          newItem.user = { id: item.userId, name: user.name };
+          return newItem;
+        } else {
+          console.error(error);
+          return null;
+        }
       })
     );
 
-    return advertisements;
+    return advertisement;
   },
 };
 
@@ -78,5 +119,11 @@ const AdvertisementModule = {
 //   console.log("LOOK", testData);
 // }
 // test();
+
+// async function testDelete() {
+//   const testData = await AdvertisementModule.delete("65a41ce1d9e70b266bb29580");
+//   console.log("LOOK DELETE", testData);
+// }
+// testDelete();
 
 module.exports = AdvertisementModule;

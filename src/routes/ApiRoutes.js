@@ -29,6 +29,8 @@ router.post(
 
 router.get("/advertisements", AdvertisementController.getAllAdvertisements);
 
-router.get("/advertisements/:id", AdvertisementController.getAdvertisementById)
+router.get("/advertisements/:id", AdvertisementController.getAdvertisementById);
+
+router.delete("/advertisements/:id", isAuthenticated, AdvertisementController.deleteAdvertisement);
 
 module.exports = router;
