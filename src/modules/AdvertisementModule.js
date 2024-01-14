@@ -8,13 +8,19 @@ const AdvertisementModule = {
 
     advertisement = await Promise.all(
       advertisement.map(async (item) => {
-        const { name } = await UserModule.findById(item.userId);
-        let newItem = item.toJSON();
-        delete newItem.updatedAt;
-        delete newItem.__v;
-        delete newItem.userId;
-        newItem.user = { id: item.userId, name: name };
-        return newItem;
+        const user = await UserModule.findById(item.userId);
+
+        if (user) {
+          let newItem = item.toJSON();
+          delete newItem.updatedAt;
+          delete newItem.__v;
+          delete newItem.userId;
+          newItem.user = { id: item.userId, name: user.name };
+          return newItem;
+        } else {
+          console.error(error);
+          return null;
+        }
       })
     );
 
@@ -30,7 +36,9 @@ const AdvertisementModule = {
       userId = userId || "";
       tags = tags || [];
 
-      let query = {};
+      let query = {
+        isDeleted: false,
+      };
 
       if (shortTitle) {
         query.shortTitle = { $regex: shortTitle, $options: "i" };
@@ -73,7 +81,7 @@ const AdvertisementModule = {
           }
         })
       );
-      
+
       return advertisements;
     } catch (error) {
       console.error(error);
