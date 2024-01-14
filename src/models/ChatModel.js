@@ -1,10 +1,10 @@
 const { Schema, default: mongoose } = require("mongoose");
-const Message = require("./MessageModel");
+const Message = require("./MessageModel").schema;
 
 const chatSchema = new Schema(
   {
     users: {
-      type: [ObjectId],
+      type: [mongoose.ObjectId],
       required: true,
     },
     messages: {

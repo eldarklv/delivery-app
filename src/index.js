@@ -5,6 +5,7 @@ const passport = require("passport")
 const session = require("express-session");
 require("dotenv").config();
 require("./config/passportConf");
+require("./modules/ChatModule")
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
