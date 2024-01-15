@@ -40,6 +40,12 @@ const ChatModule = {
   subscribe(callback) {
     eventEmitter.on("newMessage", callback);
   },
+
+  async getHistory(id) {
+    const chat = await Chat.findById(id);
+    const { messages } = chat;
+    return messages;
+  },
 };
 
 // async function testSendMsg() {
@@ -67,5 +73,11 @@ const ChatModule = {
 //   console.log(chat);
 // }
 // testFind();
+
+// async function testGetHistory() {
+//   const messages = await ChatModule.getHistory("65a46b4d56e2018bd8253520");
+//   console.log("LOOK", messages);
+// }
+// testGetHistory();
 
 module.exports = ChatModule;
