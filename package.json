@@ -4,7 +4,8 @@
   "description": "",
   "main": "scr/index.js",
   "scripts": {
-    "dev": "nodemon -L src/index.js"
+    "dev": "nodemon -L src/index.js",
+    "prod": "node src/index.js"
   },
   "repository": {
     "type": "git",
