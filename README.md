@@ -16,7 +16,9 @@
 
 
 POST /signup - регистрация
+
 Пример запроса
+
 {
   "email": "den@netology.ru",
   "password": "123",
@@ -26,7 +28,9 @@ POST /signup - регистрация
 
 
 POST /signin - авторизация
+
 Пример запроса
+
 {
   "email": "ildar@netology.ru",
   "password": "123"
@@ -34,7 +38,9 @@ POST /signin - авторизация
 
 
 POST /advertisements - создать объявление
+
 Отправлять form data
+
 images - одна или несколько картинок
 shortTitle - текст
 description -текст
