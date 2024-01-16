@@ -1,0 +1,23 @@
+# docker-compose --env-file .env up
+
+services:
+
+  delivery:
+    image: eldarklv/delivery:1.0.0
+    container_name: delivery
+    ports: 
+      - ${DELIVERY_PORTS}
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    ports:
+      - ${MONGO_PORTS}
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: delivery
